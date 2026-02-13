@@ -42,6 +42,9 @@ import {
   Flame
 } from 'lucide-react';
 
+// Get base URL from Vite
+const BASE_URL = import.meta.env.BASE_URL;
+
 // ============================================================================
 // ORGANIZATION CONFIGURATION
 // ============================================================================
@@ -219,7 +222,7 @@ const Navigation = () => {
           >
             <div className="relative">
               <img
-                src="/assets/logo.png"
+                src={`${BASE_URL}assets/logo.png`}
                 alt={CONFIG.organization.name}
                 className="h-10 sm:h-12 w-auto object-contain transition-all duration-300 group-hover:scale-105 drop-shadow-md"
                 style={{ filter: 'drop-shadow(0 0 8px rgba(5, 150, 105, 0.2))' }}
@@ -859,21 +862,21 @@ const StoriesSection = () => {
 
   const stories = [
     {
-      image: "/assets/projects/project-1.png",
+      image: `${BASE_URL}assets/projects/project-1.png`,
       title: "Bangladesh Relief 2017",
       excerpt: "Providing critical support to Rohingya refugees fleeing persecution, delivering food, shelter, and medical aid.",
       category: "Emergency Relief",
       color: "from-emerald-500 to-teal-500"
     },
     {
-      image: "/assets/projects/project-2.png",
+      image: `${BASE_URL}assets/projects/project-2.png`,
       title: "Orphan Support Program",
       excerpt: "Ongoing sponsorship program providing education, healthcare, and daily necessities to orphaned children.",
       category: "Family Support",
       color: "from-blue-500 to-indigo-500"
     },
     {
-      image: "/assets/projects/project-3.png",
+      image: `${BASE_URL}assets/projects/project-3.png`,
       title: "Emergency Response",
       excerpt: "Rapid response to natural disasters and emergencies, providing immediate relief and long-term recovery support.",
       category: "Humanitarian",
@@ -962,12 +965,12 @@ const GallerySection = () => {
   const [ref, isVisible] = useIntersectionObserver();
 
   const galleryImages = [
-    { src: "/assets/projects/project-1.png", alt: "Humanitarian Aid Distribution" },
-    { src: "/assets/projects/project-2.png", alt: "Community Support Program" },
-    { src: "/assets/projects/project-3.png", alt: "Emergency Relief" },
-    { src: "/assets/projects/project-4.png", alt: "Orphan Support" },
-    { src: "/assets/projects/project-5.png", alt: "Medical Assistance" },
-    { src: "/assets/projects/project-1.png", alt: "Food Distribution" }
+    { src: `${BASE_URL}assets/projects/project-1.png`, alt: "Humanitarian Aid Distribution" },
+    { src: `${BASE_URL}assets/projects/project-2.png`, alt: "Community Support Program" },
+    { src: `${BASE_URL}assets/projects/project-3.png`, alt: "Emergency Relief" },
+    { src: `${BASE_URL}assets/projects/project-4.png`, alt: "Orphan Support" },
+    { src: `${BASE_URL}assets/projects/project-5.png`, alt: "Medical Assistance" },
+    { src: `${BASE_URL}assets/projects/project-1.png`, alt: "Food Distribution" }
   ];
 
   return (
@@ -1141,7 +1144,7 @@ const Footer = () => {
           <div>
             <div className="flex items-center space-x-2 sm:space-x-3 mb-4 sm:mb-6">
               <img
-                src="/assets/logo.png"
+                src={`${BASE_URL}assets/logo.png`}
                 alt={CONFIG.organization.name}
                 className="h-8 sm:h-10 w-auto object-contain brightness-0 invert"
                 style={{ filter: 'brightness(0) invert(1) drop-shadow(0 0 8px rgba(16, 185, 129, 0.3))' }}
