@@ -1,0 +1,239 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom base styles */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply font-sans text-slate-700 antialiased;
+    background: linear-gradient(180deg, #fefefe 0%, #f8faf8 50%, #fefefe 100%);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif font-semibold text-slate-800;
+  }
+}
+
+/* Islamic Geometric Pattern Background */
+.islamic-pattern {
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23059669' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+.islamic-pattern-dense {
+  background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23d4af37' fill-opacity='0.05'%3E%3Cpath d='M20 20.5V18H18v2.5h-2.5V23h2.5v2.5h2V23h2.5v-2.5H20zM0 20.5V18h2v2.5h2.5V23H2v2.5H0V23h-2.5v-2.5H0zM40 20.5V18h-2v2.5h-2.5V23H38v2.5h2V23h2.5v-2.5H40zM20 0V-2.5h2V0h2.5v2.5H22V5h-2V2.5h-2.5V0H20zM20 40v2.5h-2V40h-2.5v-2.5H18V35h2v2.5h2.5V40H20z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* Custom component styles */
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center px-8 py-4 
+           bg-gradient-to-r from-emerald-600 to-emerald-500 text-white font-semibold rounded-full
+           hover:from-emerald-500 hover:to-emerald-400 transition-all duration-500
+           focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2 focus:ring-offset-white
+           shadow-lg shadow-emerald-500/20 hover:shadow-xl hover:shadow-emerald-500/30
+           transform hover:-translate-y-1 hover:scale-105;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center px-8 py-4
+           bg-white text-emerald-700 font-semibold rounded-full
+           border-2 border-emerald-200
+           hover:bg-emerald-50 hover:border-emerald-300 transition-all duration-500
+           focus:outline-none focus:ring-2 focus:ring-emerald-400
+           transform hover:-translate-y-1;
+  }
+
+  .btn-gold {
+    @apply inline-flex items-center justify-center px-8 py-4
+           bg-gradient-to-r from-amber-500 to-yellow-500 text-white font-semibold rounded-full
+           hover:from-amber-400 hover:to-yellow-400 transition-all duration-500
+           shadow-lg shadow-amber-500/20 hover:shadow-xl hover:shadow-amber-500/30
+           transform hover:-translate-y-1 hover:scale-105;
+  }
+
+  .card {
+    @apply bg-white rounded-2xl border border-slate-100
+           hover:border-emerald-200 hover:shadow-xl transition-all duration-500;
+  }
+
+  .card-premium {
+    @apply bg-white rounded-3xl border border-amber-100 shadow-xl
+           hover:shadow-2xl hover:border-amber-200 transition-all duration-500;
+  }
+
+  .section-padding {
+    @apply py-24 md:py-32 px-4 sm:px-6 lg:px-8;
+  }
+
+  .container-custom {
+    @apply max-w-7xl mx-auto;
+  }
+
+  .gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-emerald-600 to-teal-600;
+  }
+
+  .gradient-text-gold {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-amber-500 to-yellow-600;
+  }
+
+  .text-shadow {
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Islamic decorative border */
+  .islamic-border {
+    position: relative;
+  }
+
+  .islamic-border::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #d4af37, transparent);
+  }
+
+  /* Gold accent line */
+  .gold-line {
+    background: linear-gradient(90deg, transparent, #d4af37, transparent);
+    height: 1px;
+  }
+}
+
+/* Animation utilities */
+@layer utilities {
+  .animation-delay-100 { animation-delay: 100ms; }
+  .animation-delay-200 { animation-delay: 200ms; }
+  .animation-delay-300 { animation-delay: 300ms; }
+  .animation-delay-400 { animation-delay: 400ms; }
+  .animation-delay-500 { animation-delay: 500ms; }
+  .animation-delay-600 { animation-delay: 600ms; }
+  .animation-delay-700 { animation-delay: 700ms; }
+  .animation-delay-800 { animation-delay: 800ms; }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-slate-100;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gradient-to-b from-emerald-500 to-teal-500 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply from-emerald-400 to-teal-400;
+}
+
+/* Selection */
+::selection {
+  @apply bg-emerald-100 text-emerald-900;
+}
+
+/* Smooth transitions */
+* {
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Elegant fade animations */
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.8s ease-out forwards;
+}
+
+/* Subtle float animation */
+@keyframes float-subtle {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-float-subtle {
+  animation: float-subtle 6s ease-in-out infinite;
+}
+
+/* Shimmer gold effect */
+@keyframes shimmer-gold {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.shimmer-gold {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(212, 175, 55, 0.1) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer-gold 3s linear infinite;
+}
+
+/* Counter animation */
+@keyframes count-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Decorative Islamic star */
+.islamic-star {
+  position: relative;
+}
+
+.islamic-star::before {
+  content: '✦';
+  color: #d4af37;
+  margin-right: 0.5rem;
+}
+
+/* Elegant underline */
+.elegant-underline {
+  position: relative;
+  display: inline-block;
+}
+
+.elegant-underline::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, #059669, #d4af37);
+  border-radius: 1px;
+}
