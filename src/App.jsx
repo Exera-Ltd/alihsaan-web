@@ -81,13 +81,13 @@ const CONFIG = {
       name: "Dr. Shakeel Anarath", 
       role: "Founder & Chairman", 
       description: "Leading humanitarian initiatives with vision and dedication since 2006",
-      emoji: "👨‍⚕️"
+      image: `${BASE_URL}assets/dr-shakeel-anarath.png`
     },
     { 
       name: "Ajmal Hoossanbuksh", 
       role: "Executive Director", 
       description: "Driving operations and strategic partnerships for global impact",
-      emoji: "👨‍💼"
+      image: `${BASE_URL}assets/ajmal-hoossanbuksh.png`
     }
   ],
   navLinks: [
@@ -820,8 +820,16 @@ const TeamSection = () => {
                 {/* Avatar */}
                 <div className="relative mb-4 sm:mb-6">
                   <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 p-1 shadow-lg">
-                    <div className="w-full h-full rounded-full bg-white flex items-center justify-center">
-                      <span className="text-3xl sm:text-4xl">{member.emoji}</span>
+                    <div className="w-full h-full rounded-full bg-white flex items-center justify-center overflow-hidden">
+                      {member.image ? (
+                        <img 
+                          src={member.image} 
+                          alt={member.name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <span className="text-3xl sm:text-4xl">{member.emoji}</span>
+                      )}
                     </div>
                   </div>
                   <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 px-3 sm:px-4 py-1 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full text-[10px] sm:text-xs text-white font-medium shadow-lg whitespace-nowrap">
