@@ -92,6 +92,7 @@ const CONFIG = {
   ],
   navLinks: [
     { name: "Home", href: "#home" },
+    { name: "Funerals", href: "#funerals" },
     { name: "About", href: "#about" },
     { name: "Programs", href: "#programs" },
     { name: "Impact", href: "#impact" },
@@ -1308,6 +1309,176 @@ const Footer = () => {
 };
 
 // ============================================================================
+// FUNERAL POSTERS SECTION
+// ============================================================================
+const FuneralPostersSection = () => {
+  const [ref, isVisible] = useIntersectionObserver();
+  const [funerals, setFunerals] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchFunerals = async () => {
+      try {
+        const response = await fetch('https://alihsaan.com/api/v1/funerals/approved');
+        const data = await response.json();
+        if (data.result && data.records) {
+          // Get today's funerals only
+          const today = new Date().toISOString().split('T')[0];
+          const todayFunerals = data.records.filter(record => 
+            record.dateOfFuneral && record.dateOfFuneral.startsWith(today)
+          );
+          setFunerals(todayFunerals.length > 0 ? todayFunerals : data.records.slice(0, 4));
+        }
+      } catch (err) {
+        console.error('Failed to fetch funerals:', err);
+        setError('Unable to load funeral information');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFunerals();
+  }, []);
+
+  const formatDate = (dateStr) => {
+    if (!dateStr) return '';
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('en-GB', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
+  };
+
+  const formatTime = (dateStr) => {
+    if (!dateStr) return '';
+    const date = new Date(dateStr);
+    return date.toLocaleTimeString('en-GB', {
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  return (
+    <section id="funerals" className="section-padding bg-gradient-to-b from-slate-50 to-white relative overflow-hidden">
+      <div className="absolute inset-0 islamic-pattern opacity-20" />
+      
+      <div className="container-custom relative z-10">
+        {/* Header */}
+        <div
+          ref={ref}
+          className={`text-center max-w-3xl mx-auto mb-10 sm:mb-16 transition-all duration-1000 ${
+            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+          }`}
+        >
+          <div className="inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 bg-amber-50 rounded-full text-amber-700 text-xs sm:text-sm font-medium mb-4 sm:mb-6 border border-amber-200">
+            <HeartHandshake className="w-3 sm:w-4 h-3 sm:h-4 mr-2" />
+            Funeral Announcements
+          </div>
+          <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-slate-800 mb-4 sm:mb-6">
+            Today's <span className="gradient-text-gold">Janaza</span> Services
+          </h2>
+          <p className="text-base sm:text-lg text-slate-600 px-4">
+            Providing dignified funeral services and support for families in their time of need.
+          </p>
+        </div>
+
+        {/* Content */}
+        {loading ? (
+          <div className="flex justify-center items-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-500"></div>
+          </div>
+        ) : error ? (
+          <div className="text-center py-12 text-slate-500">{error}</div>
+        ) : funerals.length === 0 ? (
+          <div className="text-center py-12 text-slate-500">No funeral announcements at this time.</div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            {funerals.map((funeral, index) => (
+              <div
+                key={funeral.id || index}
+                className={`group transition-all duration-700 ${
+                  isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+                }`}
+                style={{ transitionDelay: `${index * 100}ms` }}
+              >
+                <div className="card-premium overflow-hidden h-full flex flex-col">
+                  {/* Poster Image */}
+                  {funeral.file_name && (
+                    <div className="relative h-64 sm:h-72 overflow-hidden bg-slate-100">
+                      <img
+                        src={funeral.file_name}
+                        alt={`Funeral poster for ${funeral.fullNameOfDeceased}`}
+                        className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
+                      />
+                      <div className="absolute top-3 right-3 px-3 py-1 bg-emerald-500/90 backdrop-blur-sm rounded-full text-white text-xs font-medium">
+                        {funeral.serviceTypeName || 'Full Service'}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {/* Details */}
+                  <div className="p-4 sm:p-5 flex-1 flex flex-col">
+                    <h3 className="font-serif text-lg sm:text-xl font-semibold text-slate-800 mb-2">
+                      {funeral.fullNameOfDeceased}
+                    </h3>
+                    
+                    <div className="space-y-2 text-sm text-slate-600 mb-4 flex-1">
+                      <div className="flex items-center gap-2">
+                        <Calendar className="w-4 h-4 text-emerald-500 flex-shrink-0" />
+                        <span>{formatDate(funeral.dateOfFuneral)} at {formatTime(funeral.dateOfFuneral)}</span>
+                      </div>
+                      
+                      {funeral.funeralAddress && (
+                        <div className="flex items-start gap-2">
+                          <MapPin className="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" />
+                          <span>{funeral.funeralAddress}</span>
+                        </div>
+                      )}
+                      
+                      {funeral.janazaPrayerLocation && (
+                        <div className="flex items-center gap-2">
+                          <Building2 className="w-4 h-4 text-emerald-500 flex-shrink-0" />
+                          <span>Jumu'ah: {funeral.janazaPrayerLocation}</span>
+                        </div>
+                      )}
+                      
+                      <div className="flex items-center gap-4 text-xs text-slate-500">
+                        <span>Age: {funeral.ageOfDeceased}</span>
+                        <span>Gender: {funeral.genderOfDeceased}</span>
+                      </div>
+                    </div>
+                    
+                    <a
+                      href={funeral.file_name}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center justify-center w-full px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-sm font-medium rounded-lg hover:from-emerald-600 hover:to-teal-600 transition-all duration-300"
+                    >
+                      <ExternalLink className="w-4 h-4 mr-2" />
+                      View Full Poster
+                    </a>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Footer Note */}
+        <div className="mt-8 sm:mt-12 text-center">
+          <p className="text-slate-500 text-xs sm:text-sm">
+            For funeral assistance, contact us at <a href="tel:+2302143392" className="text-emerald-600 hover:underline">+230 214-3392</a>
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+// ============================================================================
 // MAIN APP COMPONENT
 // ============================================================================
 function App() {
@@ -1316,6 +1487,7 @@ function App() {
       <Navigation />
       <main>
         <HeroSection />
+        <FuneralPostersSection />
         <AboutSection />
         <ProgramsSection />
         <ImpactSection />
