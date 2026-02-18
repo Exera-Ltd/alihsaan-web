@@ -1,80 +1,186 @@
 # Salaat Times - Easy Update Guide for Al-Ihsaan Foundation
 
-## The Easiest Way: Single Google Sheet
+## Overview
 
 Update prayer times and announcement images using **ONE Google Sheet** - just like editing Excel!
 
 ---
 
-## Google Sheet Format (All in ONE Sheet)
+## Setup Instructions (One-Time - Do This First!)
 
-Everything goes in the **same sheet** (Sheet1), just in different rows:
+### Step 1: Add the Apps Script (Enables Image Support)
+
+1. Open your Google Sheet
+2. Go to **Extensions** → **Apps Script**
+3. Delete any code in the editor
+4. Copy and paste this code:
+
+```javascript
+function doGet() {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Sheet1');
+  const data = sheet.getDataRange().getValues();
+  const images = sheet.getImages();
+  
+  // Build image map by row (for images OVER cells)
+  const imageMap = {};
+  images.forEach(img => {
+    const row = img.getAnchorCell().getRow();
+    imageMap[row] = img.getUrl();
+  });
+  
+  const result = { prayers: [], slides: [] };
+  let currentSection = null;
+  
+  for (let i = 0; i < data.length; i++) {
+    const row = data[i];
+    const firstCol = (row[0] || '').toString().trim();
+    
+    // Check for section markers
+    if (firstCol.toLowerCase() === '#prayers') {
+      currentSection = 'prayers';
+      continue;
+    }
+    if (firstCol.toLowerCase() === '#slides') {
+      currentSection = 'slides';
+      continue;
+    }
+    
+    // Skip empty rows and headers
+    if (!firstCol || firstCol.toLowerCase() === 'id') continue;
+    
+    if (currentSection === 'prayers' && row.length >= 4) {
+      // Format time correctly - Google Sheets stores time as date
+      let timeValue = row[3];
+      let timeStr = '';
+      
+      if (timeValue instanceof Date) {
+        const hours = timeValue.getHours();
+        const minutes = timeValue.getMinutes();
+        timeStr = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+      } else if (typeof timeValue === 'string') {
+        timeStr = timeValue.trim();
+      } else if (typeof timeValue === 'number') {
+        // Excel time serial number
+        const totalMinutes = Math.round(timeValue * 24 * 60);
+        const hours = Math.floor(totalMinutes / 60);
+        const minutes = totalMinutes % 60;
+        timeStr = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+      }
+      
+      result.prayers.push({
+        id: firstCol.toLowerCase(),
+        name: row[1] || '',
+        arabicName: row[2] || '',
+        time: timeStr
+      });
+    } else if (currentSection === 'slides' && row.length >= 4) {
+      // Check for image in this row (1-indexed for imageMap)
+      // Also check if the cell value contains an image URL or "CellImage"
+      let imageUrl = imageMap[i + 1] || '';
+      
+      // If no image over cell, check the cell value
+      const cellValue = (row[3] || '').toString().trim();
+      if (!imageUrl && cellValue && cellValue !== 'CellImage' && cellValue.startsWith('http')) {
+        imageUrl = cellValue;
+      }
+      
+      result.slides.push({
+        id: firstCol,
+        title: row[1] || '',
+        subtitle: row[2] || '',
+        imageUrl: imageUrl,
+        gradient: (row[4] || 'from-emerald-600 via-teal-500 to-cyan-500').toString().trim()
+      });
+    }
+  }
+  
+  return ContentService.createTextOutput(JSON.stringify(result))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+```
+
+5. Click **Save** (floppy disk icon) - name it "AlIhsaanAPI"
+6. Click **Deploy** → **New deployment**
+7. Click the gear icon → Select **Web app**
+8. Set **Execute as**: Me
+9. Set **Who has access**: Anyone
+10. Click **Deploy**
+11. Click **Authorize access** → Choose your Google account → Allow permissions
+12. **Copy the Web app URL** (looks like: `https://script.google.com/macros/s/XXXXX/exec`)
+
+AKfycbxUABIn9zWxHmsVitnworjiyqwKoavDs_ePglq5_szdC9snWS20ugNmFoUAoj8Ejuk0wg
+https://script.google.com/macros/s/AKfycbxUABIn9zWxHmsVitnworjiyqwKoavDs_ePglq5_szdC9snWS20ugNmFoUAoj8Ejuk0wg/exec
+### Step 2: Update the Website Configuration
+
+Update the GitHub Secret:
+1. Go to GitHub repository → Settings → Secrets and variables → Actions
+2. Update `VITE_GOOGLE_SHEET_URL` with the new Apps Script URL
+3. Re-run the GitHub Actions workflow
+
+---
+
+## How to Add Images (Two Options)
+
+### Option 1: Image Over Cell (Recommended)
+1. Click on the row where you want the image
+2. Go to **Insert** → **Image** → **Insert image over cells**
+3. Position the image in column D (Image column)
+4. The script will automatically detect it!
+
+### Option 2: Direct URL
+1. Upload image to Imgur, PostImage, or any image host
+2. Paste the direct URL in the Image column
+3. The script will use that URL
+
+---
+
+## Google Sheet Format
 
 ```
 Row 1:  #PRAYERS
 Row 2:  ID, Name, Arabic Name, Time
-Row 3:  fajr, Fajr, fajr, 04:45
-Row 4:  sunrise, Sunrise, shurooq, 05:58
-Row 5:  dhuhr, Dhuhr, dhuhr, 12:15
-Row 6:  asr, Asr, asr, 15:45
-Row 7:  maghrib, Maghrib, maghrib, 18:22
-Row 8:  isha, Isha, isha, 19:35
+Row 3:  fajr, Fajr, فجر, 4:45
+Row 4:  sunrise, Sunrise, شروق, 5:58
+Row 5:  dhuhr, Dhuhr/ Jummah, ظهر, 12:17
+Row 6:  asr, Asr, عصر, 15:45
+Row 7:  maghrib, Maghrib, مغرب, 18:22
+Row 8:  isha, Isha, عشاء, 19:35
 Row 9:  (empty row)
 Row 10: #SLIDES
-Row 11: ID, Title, Subtitle, Image URL, Gradient
-Row 12: 1, Ramadan Mubarak, Join us for Taraweeh, https://i.imgur.com/abc.jpg, from-emerald-600 via-teal-500 to-cyan-500
-Row 13: 2, Jumu'ah Prayer, Friday 1:00 PM, https://i.imgur.com/def.jpg, from-amber-500 via-orange-500 to-red-500
-Row 14: 3, Quran Classes, Weekend classes, https://i.imgur.com/ghi.jpg, from-purple-600 via-indigo-500 to-blue-500
+Row 11: ID, Title, Subtitle, Image, Gradient
+Row 12: 1, Ramadan Mubarak, Join us for Taraweeh, [IMAGE], from-emerald-600...
+Row 13: 2, Jumu'ah Prayer, Friday 1:00 PM, [IMAGE], from-amber-500...
 ```
 
-**That's it!** Just put `#PRAYERS` at the top of the prayer times, and `#SLIDES` at the top of the images section.
-
 ---
 
-## Visual Example
+## How to Use (After Setup)
 
-Your Google Sheet should look like this:
+### To Change Prayer Times:
+1. Open the Google Sheet
+2. Find the prayer row (rows 3-8)
+3. Change the time in column D (24-hour format: `HH:MM`)
+4. Done! Changes appear in ~1 minute
 
-| | A | B | C | D | E |
-|---|---|---|---|---|---|
-| **1** | **#PRAYERS** | | | | |
-| **2** | ID | Name | Arabic Name | Time | |
-| **3** | fajr | Fajr | fajr | 04:45 | |
-| **4** | sunrise | Sunrise | shurooq | 05:58 | |
-| **5** | dhuhr | Dhuhr | dhuhr | 12:15 | |
-| **6** | asr | Asr | asr | 15:45 | |
-| **7** | maghrib | Maghrib | maghrib | 18:22 | |
-| **8** | isha | Isha | isha | 19:35 | |
-| **9** | | | | | |
-| **10** | **#SLIDES** | | | | |
-| **11** | ID | Title | Subtitle | Image URL | Gradient |
-| **12** | 1 | Ramadan Mubarak | Join us for Taraweeh | https://i.imgur.com/abc.jpg | from-emerald-600 via-teal-500 to-cyan-500 |
-| **13** | 2 | Jumu'ah Prayer | Friday 1:00 PM | https://i.imgur.com/def.jpg | from-amber-500 via-orange-500 to-red-500 |
+### To Add an Announcement with Image:
+1. Add a new row under `#SLIDES` section
+2. Fill in: ID, Title, Subtitle
+3. **Insert → Image → Insert image over cells** → Position in column D
+4. Done! The image appears automatically!
 
----
+### To Change an Image:
+1. Delete the old image (click on it and press Delete)
+2. Insert a new image over cells
+3. Position it in column D
+4. Done!
 
-## How to Add/Change Images
-
-### Step 1: Upload Your Image
-1. Go to [Imgur.com](https://imgur.com) (free image hosting, no account needed)
-2. Click "New post" and upload your image
-3. Right-click the uploaded image > "Copy image address"
-4. Paste this URL in column D (Image URL)
-
-### Step 2: Add a Row
-1. Go to the `#SLIDES` section (around row 10+)
-2. Add a new row below the header
-3. Fill in: ID, Title, Subtitle, Image URL, Gradient
-
-### Step 3: Done!
-- The website will automatically loop through all images
-- Add as many slides as you want!
+### To Remove an Announcement:
+1. Delete the entire row
+2. Done!
 
 ---
 
 ## Gradient Color Options (Column E)
-
-Choose a background color for slides (used if no image):
 
 | Gradient | Color |
 |----------|-------|
@@ -86,52 +192,6 @@ Choose a background color for slides (used if no image):
 
 ---
 
-## Quick Reference for Al-Ihsaan Staff
-
-### To Change Prayer Times:
-1. Open the Google Sheet
-2. Find the prayer row (rows 3-8)
-3. Change the time in column D (24-hour format: `HH:MM`)
-4. Done!
-
-### To Add an Announcement Image:
-1. Upload image to Imgur.com
-2. Copy the image URL
-3. Add a new row under `#SLIDES` section
-4. Fill in: ID, Title, Subtitle, Image URL
-5. Done!
-
-### To Remove an Image:
-1. Delete the entire row
-2. Done!
-
----
-
-## Setup Instructions (One-Time - Developer)
-
-### Step 1: Create the Google Sheet
-1. Go to [Google Sheets](https://sheets.google.com)
-2. Create a new spreadsheet named "Al-Ihsaan Prayer Times"
-3. Add the data in the format shown above
-
-### Step 2: Publish the Sheet
-1. Click **File** > **Share** > **Publish to web**
-2. Select **Sheet1**
-3. Select **Comma-separated values (.csv)**
-4. Click **Publish**
-5. Copy the URL
-
-### Step 3: Configure the Website
-Create a `.env` file:
-```
-VITE_GOOGLE_SHEET_URL=https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID/export?format=csv&gid=0
-```
-
-### Step 4: Share with Staff
-Share the Google Sheet with Al-Ihsaan staff email addresses (Editor access)
-
----
-
 ## Access URLs
 
 - **Main Website**: `https://[username].github.io/alihsaan-web/`
@@ -139,8 +199,15 @@ Share the Google Sheet with Al-Ihsaan staff email addresses (Editor access)
 
 ---
 
+## Troubleshooting
+
+- **Images not showing**: Make sure you used "Insert image over cells" (not "in cell")
+- **Time showing wrong**: Make sure the time column is formatted as time in Google Sheets
+- **Website not updating**: Wait 1-2 minutes, then refresh the page
+- **Script error**: Re-authorize the script in Apps Script editor
+
+---
+
 ## Need Help?
 
-- **Undo mistakes**: Press Ctrl+Z or use File > Version history
-- **Image not showing**: Make sure the image URL ends with `.jpg` or `.png`
-- **Website not updating**: Wait 1-2 minutes, then refresh the page
+Contact your developer with the Web app URL from Step 1.

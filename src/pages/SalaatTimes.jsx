@@ -129,7 +129,8 @@ const parseCSVLine = (line) => {
 const SalaatTimes = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [prayerData, setPrayerData] = useState(null);
-  const [slides, setSlides] = useState(DEFAULT_SLIDES);
+  const [funeralSlides, setFuneralSlides] = useState([]);
+  const [googleSlides, setGoogleSlides] = useState([]);
   const [loading, setLoading] = useState(true);
   const [nextPrayer, setNextPrayer] = useState(null);
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -137,28 +138,74 @@ const SalaatTimes = () => {
   const [timeLeft, setTimeLeft] = useState({ hours: 0, minutes: 0, seconds: 0 });
   const [isDarkMode, setIsDarkMode] = useState(true);
 
+  // Combined slides: Mayyat first, then Google Sheet slides
+  const slides = [...funeralSlides, ...googleSlides];
+
   // Load prayer times and slides
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Try Google Sheets first if URL is configured
+        // Fetch funeral (mayyat) data from API
+        try {
+          const funeralResponse = await fetch('https://alihsaan.com/api/v1/funerals/approved');
+          if (funeralResponse.ok) {
+            const funeralData = await funeralResponse.json();
+            if (funeralData.result && funeralData.records) {
+              // Get today's funerals first, then all approved
+              const today = new Date().toISOString().split('T')[0];
+              const todayFunerals = funeralData.records.filter(record => 
+                record.dateOfFuneral && record.dateOfFuneral.startsWith(today)
+              );
+              const funeralsToShow = todayFunerals.length > 0 ? todayFunerals : funeralData.records;
+              
+              // Convert funeral records to slides
+              const funeralSlideData = funeralsToShow
+                .filter(f => f.file_name)
+                .map((funeral, index) => ({
+                  id: `funeral-${funeral.id || index}`,
+                  title: funeral.fullNameOfDeceased || 'Janaza',
+                  subtitle: funeral.dateOfFuneral 
+                    ? `${new Date(funeral.dateOfFuneral).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}`
+                    : 'Funeral Service',
+                  imageUrl: funeral.file_name,
+                  gradient: 'from-slate-700 via-slate-600 to-slate-800',
+                  isFuneral: true,
+                  details: funeral
+                }));
+              setFuneralSlides(funeralSlideData);
+            }
+          }
+        } catch (err) {
+          console.error('Failed to fetch funerals:', err);
+        }
+
+        // Try Google Sheets/Apps Script for prayer times and additional slides
         if (GOOGLE_SHEET_URL) {
           const response = await fetch(GOOGLE_SHEET_URL);
           if (response.ok) {
-            const csvText = await response.text();
-            const data = parseCSV(csvText);
+            const text = await response.text();
             
-            if (data.prayers.length > 0) {
+            // Check if response is JSON (from Apps Script) or CSV (from Sheets)
+            let data;
+            if (text.trim().startsWith('{') || text.trim().startsWith('[')) {
+              // JSON response from Apps Script
+              data = JSON.parse(text);
+            } else {
+              // CSV response from Google Sheets
+              data = parseCSV(text);
+            }
+            
+            if (data.prayers && data.prayers.length > 0) {
               setPrayerData({
                 mosque: { name: "Al-Ihsaan Foundation", location: "Port Louis, Mauritius" },
                 prayers: data.prayers
               });
             }
-            if (data.slides.length > 0) {
-              setSlides(data.slides);
+            if (data.slides && data.slides.length > 0) {
+              setGoogleSlides(data.slides);
             }
             
-            if (data.prayers.length > 0) {
+            if (data.prayers && data.prayers.length > 0) {
               setLoading(false);
               return;
             }
@@ -171,7 +218,7 @@ const SalaatTimes = () => {
           const data = await response.json();
           setPrayerData(data);
           if (data.slides) {
-            setSlides(data.slides);
+            setGoogleSlides(data.slides);
           }
         } else {
           // Use hardcoded defaults
@@ -466,64 +513,83 @@ const SalaatTimes = () => {
                     : 'opacity-0 scale-95 pointer-events-none'
                 }`}
               >
-                {/* Background - Image or Gradient */}
-                {slide.imageUrl ? (
-                  <div 
-                    className="absolute inset-0 bg-cover bg-center"
-                    style={{ backgroundImage: `url(${slide.imageUrl})` }}
-                  >
-                    {/* Dark overlay for text readability */}
-                    <div className="absolute inset-0 bg-black/50" />
-                  </div>
+                {/* Funeral Slide - Show poster image directly */}
+                {slide.isFuneral && slide.imageUrl ? (
+                  <>
+                    {/* Full poster image */}
+                    <img 
+                      src={slide.imageUrl} 
+                      alt={slide.title}
+                      className="absolute inset-0 w-full h-full object-contain bg-slate-900"
+                    />
+                    {/* Funeral badge */}
+                    <div className="absolute top-4 left-4 px-3 py-1.5 bg-emerald-500/90 backdrop-blur-sm rounded-full text-white text-xs font-medium flex items-center gap-1.5">
+                      <Bell className="w-3 h-3" />
+                      Janaza Announcement
+                    </div>
+                  </>
                 ) : (
-                  <div className={`absolute inset-0 bg-gradient-to-br ${slide.gradient}`} />
+                  <>
+                    {/* Regular slide - Background Image or Gradient */}
+                    {slide.imageUrl ? (
+                      <div 
+                        className="absolute inset-0 bg-cover bg-center"
+                        style={{ backgroundImage: `url(${slide.imageUrl})` }}
+                      >
+                        {/* Dark overlay for text readability */}
+                        <div className="absolute inset-0 bg-black/50" />
+                      </div>
+                    ) : (
+                      <div className={`absolute inset-0 bg-gradient-to-br ${slide.gradient}`} />
+                    )}
+                    
+                    {/* Decorative Pattern */}
+                    <div className="absolute inset-0 opacity-10">
+                      <div className="absolute inset-0" style={{
+                        backgroundImage: `url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M40 40L80 0v80L40 40zm0 0L0 0v80l40-40z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
+                      }} />
+                    </div>
+
+                    {/* Decorative Elements */}
+                    <div className="absolute top-10 right-10 w-40 h-40 bg-white/10 rounded-full blur-3xl" />
+                    <div className="absolute bottom-10 left-10 w-48 h-48 bg-white/10 rounded-full blur-3xl" />
+                    
+                    {/* Content */}
+                    <div className="relative h-full flex flex-col items-center justify-center p-6 lg:p-8 xl:p-12 text-center">
+                      {/* Islamic Decorative Top */}
+                      <div className="mb-4 lg:mb-6">
+                        <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 xl:w-32 xl:h-32 mx-auto mb-3 lg:mb-4 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm">
+                          <Star className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 xl:w-16 xl:h-16 text-white" />
+                        </div>
+                        <div className="flex items-center justify-center gap-2">
+                          <div className="h-px w-12 sm:w-16 bg-white/40" />
+                          <div className="w-2 h-2 bg-white/60 rounded-full" />
+                          <div className="h-px w-12 sm:w-16 bg-white/40" />
+                        </div>
+                      </div>
+
+                      {/* Title */}
+                      <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl font-bold text-white mb-2 lg:mb-4 leading-tight">
+                        {slide.title}
+                      </h2>
+                      
+                      {/* Subtitle */}
+                      <p className="text-sm sm:text-base lg:text-lg xl:text-xl 2xl:text-2xl text-white/80 mb-4 lg:mb-8 max-w-md">
+                        {slide.subtitle}
+                      </p>
+
+                      {/* Decorative Bottom */}
+                      <div className="mt-auto">
+                        <div className="flex items-center justify-center gap-2 mb-3 lg:mb-4">
+                          <div className="h-px w-16 sm:w-20 bg-white/40" />
+                          <div className="w-2 h-2 bg-white/60 rounded-full" />
+                          <div className="h-px w-16 sm:w-20 bg-white/40" />
+                        </div>
+                        <p className="text-white/60 text-xs sm:text-sm lg:text-base">MASJID AL-IHSAAN</p>
+                      </div>
+                    </div>
+                  </>
                 )}
-                
-                {/* Decorative Pattern */}
-                <div className="absolute inset-0 opacity-10">
-                  <div className="absolute inset-0" style={{
-                    backgroundImage: `url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M40 40L80 0v80L40 40zm0 0L0 0v80l40-40z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
-                  }} />
-                </div>
-
-                {/* Decorative Elements */}
-                <div className="absolute top-10 right-10 w-40 h-40 bg-white/10 rounded-full blur-3xl" />
-                <div className="absolute bottom-10 left-10 w-48 h-48 bg-white/10 rounded-full blur-3xl" />
-                
-                {/* Content */}
-                <div className="relative h-full flex flex-col items-center justify-center p-6 lg:p-8 xl:p-12 text-center">
-                  {/* Islamic Decorative Top */}
-                  <div className="mb-4 lg:mb-6">
-                    <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 xl:w-32 xl:h-32 mx-auto mb-3 lg:mb-4 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm">
-                      <Star className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 xl:w-16 xl:h-16 text-white" />
-                    </div>
-                    <div className="flex items-center justify-center gap-2">
-                      <div className="h-px w-12 sm:w-16 bg-white/40" />
-                      <div className="w-2 h-2 bg-white/60 rounded-full" />
-                      <div className="h-px w-12 sm:w-16 bg-white/40" />
-                    </div>
-                  </div>
-
-                  {/* Title */}
-                  <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl font-bold text-white mb-2 lg:mb-4 leading-tight">
-                    {slide.title}
-                  </h2>
-                  
-                  {/* Subtitle */}
-                  <p className="text-sm sm:text-base lg:text-lg xl:text-xl 2xl:text-2xl text-white/80 mb-4 lg:mb-8 max-w-md">
-                    {slide.subtitle}
-                  </p>
-
-                  {/* Decorative Bottom */}
-                  <div className="mt-auto">
-                    <div className="flex items-center justify-center gap-2 mb-3 lg:mb-4">
-                      <div className="h-px w-16 sm:w-20 bg-white/40" />
-                      <div className="w-2 h-2 bg-white/60 rounded-full" />
-                      <div className="h-px w-16 sm:w-20 bg-white/40" />
-                    </div>
-                    <p className="text-white/60 text-xs sm:text-sm lg:text-base">MASJID AL-IHSAAN</p>
-                  </div>
-                </div>
               </div>
             ))}
 
