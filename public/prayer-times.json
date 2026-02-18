@@ -1,0 +1,45 @@
+{
+  "mosque": {
+    "name": "Al-Ihsaan Foundation",
+    "location": "Port Louis, Mauritius"
+  },
+  "prayers": [
+    { "id": "fajr", "name": "Fajr", "arabicName": "fajr", "time": "04:45" },
+    { "id": "sunrise", "name": "Sunrise", "arabicName": "shurooq", "time": "05:58" },
+    { "id": "dhuhr", "name": "Dhuhr", "arabicName": "dhuhr", "time": "12:15" },
+    { "id": "asr", "name": "Asr", "arabicName": "asr", "time": "15:45" },
+    { "id": "maghrib", "name": "Maghrib", "arabicName": "maghrib", "time": "18:22" },
+    { "id": "isha", "name": "Isha", "arabicName": "isha", "time": "19:35" }
+  ],
+  "slides": [
+    {
+      "id": "1",
+      "title": "Ramadan Mubarak",
+      "subtitle": "Join us for Taraweeh prayers every night after Isha",
+      "imageUrl": "",
+      "gradient": "from-emerald-600 via-teal-500 to-cyan-500"
+    },
+    {
+      "id": "2",
+      "title": "Jumu'ah Prayer",
+      "subtitle": "Every Friday at 1:00 PM - Don't miss the blessings",
+      "imageUrl": "",
+      "gradient": "from-amber-500 via-orange-500 to-red-500"
+    },
+    {
+      "id": "3",
+      "title": "Quran Classes",
+      "subtitle": "Weekend classes for children and adults - Register now",
+      "imageUrl": "",
+      "gradient": "from-purple-600 via-indigo-500 to-blue-500"
+    },
+    {
+      "id": "4",
+      "title": "Community Iftar",
+      "subtitle": "Breaking fast together - Everyone welcome",
+      "imageUrl": "",
+      "gradient": "from-rose-500 via-pink-500 to-fuchsia-500"
+    }
+  ],
+  "lastUpdated": "2026-02-18"
+}
