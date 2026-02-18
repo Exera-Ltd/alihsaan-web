@@ -12,7 +12,8 @@ import {
   Bell,
   Play,
   Pause,
-  Loader2
+  Loader2,
+  SunDim
 } from 'lucide-react';
 
 // Get base URL from Vite
@@ -134,6 +135,7 @@ const SalaatTimes = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
   const [timeLeft, setTimeLeft] = useState({ hours: 0, minutes: 0, seconds: 0 });
+  const [isDarkMode, setIsDarkMode] = useState(true);
 
   // Load prayer times and slides
   useEffect(() => {
@@ -148,7 +150,7 @@ const SalaatTimes = () => {
             
             if (data.prayers.length > 0) {
               setPrayerData({
-                mosque: { name: "MASJID AL IHSAAN", location: "Port Louis, Mauritius" },
+                mosque: { name: "Al-Ihsaan Foundation", location: "Port Louis, Mauritius" },
                 prayers: data.prayers
               });
             }
@@ -174,14 +176,14 @@ const SalaatTimes = () => {
         } else {
           // Use hardcoded defaults
           setPrayerData({
-            mosque: { name: "MASJID AL IHSAAN", location: "Port Louis, Mauritius" },
+            mosque: { name: "Al-Ihsaan Foundation", location: "Port Louis, Mauritius" },
             prayers: DEFAULT_PRAYERS
           });
         }
       } catch (err) {
         console.error('Failed to load data:', err);
         setPrayerData({
-          mosque: { name: "MASJID AL IHSAAN", location: "Port Louis, Mauritius" },
+          mosque: { name: "Al-Ihsaan Foundation", location: "Port Louis, Mauritius" },
           prayers: DEFAULT_PRAYERS
         });
       } finally {
@@ -275,31 +277,57 @@ const SalaatTimes = () => {
   const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % slides.length);
   const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
 
+  // Theme classes
+  const theme = {
+    bg: isDarkMode 
+      ? 'bg-gradient-to-br from-slate-900 via-emerald-950 to-slate-900' 
+      : 'bg-gradient-to-br from-slate-100 via-emerald-50 to-slate-100',
+    text: isDarkMode ? 'text-white' : 'text-slate-800',
+    textMuted: isDarkMode ? 'text-white/60' : 'text-slate-500',
+    card: isDarkMode ? 'bg-white/5 border-white/10' : 'bg-white border-slate-200',
+    cardAlt: isDarkMode ? 'bg-white/10' : 'bg-emerald-50',
+    cardHighlight: isDarkMode ? 'bg-white/5 text-white/40' : 'bg-slate-100 text-slate-400',
+    accent: isDarkMode ? 'text-emerald-400' : 'text-emerald-600',
+    accentBg: isDarkMode ? 'bg-white/10' : 'bg-emerald-100',
+    glow: isDarkMode ? 'bg-emerald-500/10' : 'bg-emerald-500/5',
+  };
+
   // Loading state
   if (loading) {
     return (
-      <div className="h-screen w-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-emerald-950 to-slate-900">
+      <div className={`h-screen w-screen flex items-center justify-center ${theme.bg}`}>
         <Loader2 className="w-12 h-12 text-emerald-400 animate-spin" />
       </div>
     );
   }
 
   const prayers = prayerData?.prayers || DEFAULT_PRAYERS;
-  const mosque = prayerData?.mosque || { name: "MASJID AL IHSAAN", location: "Port Louis, Mauritius" };
-  const currentSlideData = slides[currentSlide];
+  const mosque = prayerData?.mosque || { name: "Al-Ihsaan Foundation", location: "Port Louis, Mauritius" };
 
   return (
-    <div className="h-screen w-screen overflow-hidden bg-gradient-to-br from-slate-900 via-emerald-950 to-slate-900">
+    <div className={`h-screen w-screen overflow-hidden ${theme.bg}`}>
       {/* Background Pattern */}
-      <div className="fixed inset-0 opacity-5">
+      <div className={`fixed inset-0 ${isDarkMode ? 'opacity-5' : 'opacity-10'}`}>
         <div className="absolute inset-0" style={{
           backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
         }} />
       </div>
 
       {/* Decorative Glows */}
-      <div className="fixed top-0 left-1/4 w-[600px] h-[600px] bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="fixed bottom-0 right-1/4 w-[600px] h-[600px] bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className={`fixed top-0 left-1/4 w-[600px] h-[600px] ${theme.glow} rounded-full blur-3xl pointer-events-none`} />
+      <div className={`fixed bottom-0 right-1/4 w-[600px] h-[600px] ${theme.glow} rounded-full blur-3xl pointer-events-none`} />
+
+      {/* Theme Toggle Button */}
+      <button
+        onClick={() => setIsDarkMode(!isDarkMode)}
+        className={`fixed top-4 right-4 z-50 w-10 h-10 rounded-full flex items-center justify-center transition-all ${
+          isDarkMode 
+            ? 'bg-white/10 text-white hover:bg-white/20' 
+            : 'bg-emerald-100 text-emerald-600 hover:bg-emerald-200'
+        }`}
+      >
+        {isDarkMode ? <SunDim className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+      </button>
 
       {/* Main Content - Responsive Layout */}
       <div className="relative h-full flex flex-col lg:flex-row">
@@ -308,7 +336,7 @@ const SalaatTimes = () => {
         <div className="w-full lg:w-[55%] h-full flex flex-col justify-center px-4 py-4 sm:px-6 sm:py-6 lg:px-8 xl:px-12">
           
           {/* Header with Logo */}
-          <div className="bg-white/10 backdrop-blur-xl rounded-2xl p-4 sm:p-5 lg:p-6 border border-white/20 mb-3 sm:mb-4 lg:mb-5">
+          <div className={`backdrop-blur-xl rounded-2xl p-4 sm:p-5 lg:p-6 border mb-3 sm:mb-4 lg:mb-5 ${theme.card}`}>
             <div className="flex items-center gap-4">
               <img
                 src={`${BASE_URL}assets/al-ihsaan-logo.webp`}
@@ -316,9 +344,9 @@ const SalaatTimes = () => {
                 className="h-16 sm:h-20 lg:h-24 xl:h-28 w-auto drop-shadow-lg"
               />
               <div className="flex-1 text-center">
-                <h1 className="text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-bold text-white mb-1">MASJID AL-IHSAAAN</h1>
-                <p className="text-emerald-400 text-sm sm:text-base lg:text-lg font-medium mb-1">Islamic Help Reaching People in Need</p>
-                <div className="flex items-center justify-center gap-2 text-white/60 text-xs sm:text-sm">
+                <h1 className={`text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-bold mb-1 ${theme.text}`}>MASJID AL-IHSAAAN</h1>
+                <p className={`text-sm sm:text-base lg:text-lg font-medium mb-1 ${isDarkMode ? 'text-emerald-400' : 'text-emerald-600'}`}>Islamic Help Reaching People in Need</p>
+                <div className={`flex items-center justify-center gap-2 text-xs sm:text-sm ${theme.textMuted}`}>
                   <MapPin className="w-3 h-3 sm:w-4 sm:h-4" />
                   <span>{mosque.location}</span>
                 </div>
@@ -329,28 +357,32 @@ const SalaatTimes = () => {
           {/* Current Time & Next Prayer - Same Row */}
           <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 lg:gap-4 mb-3 sm:mb-4 lg:mb-5">
             {/* Current Time */}
-            <div className="flex-1 bg-white/5 backdrop-blur-xl rounded-xl sm:rounded-2xl p-3 sm:p-4 lg:p-5 border border-white/10">
-              <div className="flex items-center gap-2 text-emerald-400 mb-1">
+            <div className={`flex-1 backdrop-blur-xl rounded-xl sm:rounded-2xl p-3 sm:p-4 lg:p-5 border ${theme.card}`}>
+              <div className={`flex items-center gap-2 mb-1 ${theme.accent}`}>
                 <Clock className="w-3 h-3 sm:w-4 sm:h-4" />
                 <span className="text-[10px] sm:text-xs font-medium uppercase tracking-wider">Current Time</span>
               </div>
-              <div className="text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-bold text-white tracking-tight">
+              <div className={`text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-bold tracking-tight ${theme.text}`}>
                 {formatTime(currentTime)}
               </div>
-              <div className="text-xs sm:text-sm text-white/60 mt-1 hidden sm:block">
+              <div className={`text-xs sm:text-sm mt-1 hidden sm:block ${theme.textMuted}`}>
                 {formatDate(currentTime)}
               </div>
             </div>
 
             {/* Next Prayer Countdown */}
             {nextPrayer && (
-              <div className="flex-1 bg-gradient-to-br from-emerald-600/30 to-teal-600/30 backdrop-blur-xl rounded-xl sm:rounded-2xl p-3 sm:p-4 lg:p-5 border border-emerald-500/40">
+              <div className={`flex-1 backdrop-blur-xl rounded-xl sm:rounded-2xl p-3 sm:p-4 lg:p-5 border ${
+                isDarkMode 
+                  ? 'bg-gradient-to-br from-emerald-600/30 to-teal-600/30 border-emerald-500/40' 
+                  : 'bg-gradient-to-br from-emerald-100 to-teal-100 border-emerald-200'
+              }`}>
                 <div className="flex items-center justify-between mb-1 sm:mb-2">
-                  <div className="flex items-center gap-2 text-amber-400">
+                  <div className={`flex items-center gap-2 ${isDarkMode ? 'text-amber-400' : 'text-amber-600'}`}>
                     <Bell className="w-3 h-3 sm:w-4 sm:h-4" />
                     <span className="text-[10px] sm:text-xs font-medium uppercase tracking-wider">Next</span>
                   </div>
-                  <span className="text-white font-bold text-sm sm:text-base lg:text-lg xl:text-xl">{nextPrayer.name}</span>
+                  <span className={`font-bold text-sm sm:text-base lg:text-lg xl:text-xl ${theme.text}`}>{nextPrayer.name}</span>
                 </div>
                 <div className="flex items-center justify-center gap-1 sm:gap-2">
                   {[
@@ -359,12 +391,14 @@ const SalaatTimes = () => {
                     { value: timeLeft.seconds, label: 'S' }
                   ].map((item, index) => (
                     <div key={index} className="flex items-center gap-1">
-                      <div className="bg-white/15 rounded-lg px-2 py-1 sm:px-3 sm:py-1.5 min-w-[40px] sm:min-w-[45px] text-center">
-                        <span className="text-base sm:text-lg lg:text-xl xl:text-2xl font-bold text-white">
+                      <div className={`rounded-lg px-2 py-1 sm:px-3 sm:py-1.5 min-w-[40px] sm:min-w-[45px] text-center ${
+                        isDarkMode ? 'bg-white/15' : 'bg-white/80'
+                      }`}>
+                        <span className={`text-base sm:text-lg lg:text-xl xl:text-2xl font-bold ${theme.text}`}>
                           {String(item.value).padStart(2, '0')}
                         </span>
                       </div>
-                      {index < 2 && <span className="text-sm sm:text-base lg:text-lg text-emerald-400 font-bold">:</span>}
+                      {index < 2 && <span className={`text-sm sm:text-base lg:text-lg font-bold ${theme.accent}`}>:</span>}
                     </div>
                   ))}
                 </div>
@@ -373,8 +407,8 @@ const SalaatTimes = () => {
           </div>
 
           {/* Prayer Times Grid - 2 columns x 3 rows - MAIN FOCUS */}
-          <div className="bg-white/5 backdrop-blur-xl rounded-xl sm:rounded-2xl p-3 sm:p-4 lg:p-5 xl:p-6 border border-white/10 flex-1 sm:flex-none">
-            <div className="flex items-center gap-2 text-emerald-400 mb-2 sm:mb-3 lg:mb-4 px-1">
+          <div className={`backdrop-blur-xl rounded-xl sm:rounded-2xl p-3 sm:p-4 lg:p-5 xl:p-6 border flex-1 sm:flex-none ${theme.card}`}>
+            <div className={`flex items-center gap-2 mb-2 sm:mb-3 lg:mb-4 px-1 ${theme.accent}`}>
               <Star className="w-3 h-3 sm:w-4 sm:h-4" />
               <span className="text-[10px] sm:text-xs font-medium uppercase tracking-wider">Today's Prayer Times</span>
             </div>
@@ -393,19 +427,21 @@ const SalaatTimes = () => {
                       isNext
                         ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg shadow-emerald-500/30'
                         : isPast
-                        ? 'bg-white/5 text-white/40'
-                        : 'bg-white/10 text-white'
+                        ? theme.cardHighlight
+                        : isDarkMode 
+                        ? 'bg-white/10 text-white' 
+                        : 'bg-emerald-50 text-slate-800 border border-emerald-100'
                     }`}
                   >
                     <div className="flex items-center gap-2 sm:gap-3 lg:gap-4">
                       <div className={`w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 xl:w-14 xl:h-14 rounded-lg sm:rounded-xl flex items-center justify-center ${
-                        isNext ? 'bg-white/20' : 'bg-white/10'
+                        isNext ? 'bg-white/20' : isDarkMode ? 'bg-white/10' : 'bg-emerald-100'
                       }`}>
                         <Icon className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 xl:w-7 xl:h-7" />
                       </div>
                       <div>
                         <span className="font-bold text-sm sm:text-base lg:text-lg xl:text-xl">{prayer.name}</span>
-                        <span className="text-[10px] sm:text-xs block opacity-60">{prayer.arabicName}</span>
+                        <span className={`text-[10px] sm:text-xs block ${isNext ? 'opacity-80' : 'opacity-60'}`}>{prayer.arabicName}</span>
                       </div>
                     </div>
                     <span className="text-base sm:text-lg lg:text-xl xl:text-2xl font-bold">{prayer.time}</span>
@@ -538,7 +574,11 @@ const SalaatTimes = () => {
           </div>
 
           {/* Powered By Card */}
-          <div className="mt-4 w-full bg-white/90 backdrop-blur-md rounded-xl p-3 border border-white/20">
+          <div className={`mt-4 w-full backdrop-blur-md rounded-xl p-3 border ${
+            isDarkMode 
+              ? 'bg-white/90 border-white/20' 
+              : 'bg-white border-slate-200'
+          }`}>
             <div className="flex items-center justify-center gap-2">
               <span className="text-slate-500 text-xs">Powered by</span>
               <img
