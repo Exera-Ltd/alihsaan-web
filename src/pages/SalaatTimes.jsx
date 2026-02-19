@@ -536,56 +536,44 @@ const SalaatTimes = () => {
                         className="absolute inset-0 bg-cover bg-center"
                         style={{ backgroundImage: `url(${slide.imageUrl})` }}
                       >
-                        {/* Dark overlay for text readability */}
-                        <div className="absolute inset-0 bg-black/50" />
+                        {/* Very light overlay for image visibility */}
+                        <div className="absolute inset-0 bg-black/10" />
                       </div>
                     ) : (
                       <div className={`absolute inset-0 bg-gradient-to-br ${slide.gradient}`} />
                     )}
                     
-                    {/* Decorative Pattern */}
-                    <div className="absolute inset-0 opacity-10">
+                    {/* Decorative Pattern - very subtle */}
+                    <div className="absolute inset-0 opacity-5">
                       <div className="absolute inset-0" style={{
                         backgroundImage: `url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M40 40L80 0v80L40 40zm0 0L0 0v80l40-40z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
                       }} />
                     </div>
 
-                    {/* Decorative Elements */}
-                    <div className="absolute top-10 right-10 w-40 h-40 bg-white/10 rounded-full blur-3xl" />
-                    <div className="absolute bottom-10 left-10 w-48 h-48 bg-white/10 rounded-full blur-3xl" />
+                    {/* Decorative Elements - very subtle */}
+                    <div className="absolute top-10 right-10 w-40 h-40 bg-white/5 rounded-full blur-3xl" />
+                    <div className="absolute bottom-10 left-10 w-48 h-48 bg-white/5 rounded-full blur-3xl" />
                     
                     {/* Content */}
                     <div className="relative h-full flex flex-col items-center justify-center p-6 lg:p-8 xl:p-12 text-center">
-                      {/* Islamic Decorative Top */}
-                      <div className="mb-4 lg:mb-6">
-                        <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 xl:w-32 xl:h-32 mx-auto mb-3 lg:mb-4 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm">
-                          <Star className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 xl:w-16 xl:h-16 text-white" />
-                        </div>
-                        <div className="flex items-center justify-center gap-2">
-                          <div className="h-px w-12 sm:w-16 bg-white/40" />
-                          <div className="w-2 h-2 bg-white/60 rounded-full" />
-                          <div className="h-px w-12 sm:w-16 bg-white/40" />
-                        </div>
-                      </div>
-
                       {/* Title */}
-                      <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl font-bold text-white mb-2 lg:mb-4 leading-tight">
+                      <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl font-bold text-white mb-2 lg:mb-4 leading-tight drop-shadow-lg">
                         {slide.title}
                       </h2>
                       
                       {/* Subtitle */}
-                      <p className="text-sm sm:text-base lg:text-lg xl:text-xl 2xl:text-2xl text-white/80 mb-4 lg:mb-8 max-w-md">
+                      <p className="text-sm sm:text-base lg:text-lg xl:text-xl 2xl:text-2xl text-white/70 mb-4 lg:mb-8 max-w-md drop-shadow-md">
                         {slide.subtitle}
                       </p>
 
                       {/* Decorative Bottom */}
                       <div className="mt-auto">
                         <div className="flex items-center justify-center gap-2 mb-3 lg:mb-4">
-                          <div className="h-px w-16 sm:w-20 bg-white/40" />
-                          <div className="w-2 h-2 bg-white/60 rounded-full" />
-                          <div className="h-px w-16 sm:w-20 bg-white/40" />
+                          <div className="h-px w-16 sm:w-20 bg-white/20" />
+                          <div className="w-2 h-2 bg-white/30 rounded-full" />
+                          <div className="h-px w-16 sm:w-20 bg-white/20" />
                         </div>
-                        <p className="text-white/60 text-xs sm:text-sm lg:text-base">MASJID AL-IHSAAN</p>
+                        <p className="text-white/50 text-xs sm:text-sm lg:text-base">MASJID AL-IHSAAN</p>
                       </div>
                     </div>
                   </>
@@ -640,23 +628,23 @@ const SalaatTimes = () => {
           </div>
 
           {/* Powered By Card */}
-          <div className={`mt-4 w-full backdrop-blur-md rounded-xl p-3 border ${
+          <div className={`mt-4 w-full backdrop-blur-md rounded-xl p-4 border ${
             isDarkMode 
               ? 'bg-white/90 border-white/20' 
               : 'bg-white border-slate-200'
           }`}>
-            <div className="flex items-center justify-center gap-2">
-              <span className="text-slate-500 text-xs">Powered by</span>
+            <div className="flex items-center justify-center gap-3">
+              <span className="text-slate-500 text-sm">Powered by</span>
               <img
                 src={`${BASE_URL}assets/exera-logo.png`}
                 alt="Exera"
-                className="h-5 w-auto"
+                className="h-6 w-auto"
               />
-              <span className="text-slate-300 text-lg">|</span>
+              <span className="text-slate-300 text-xl">|</span>
               <img
                 src={`${BASE_URL}assets/made-in-moris.png`}
                 alt="Made in Moris"
-                className="h-5 w-auto"
+                className="h-6 w-auto"
               />
             </div>
           </div>

@@ -21,11 +21,17 @@ function doGet() {
   const data = sheet.getDataRange().getValues();
   const images = sheet.getImages();
   
-  // Build image map by row (for images OVER cells)
+  // Debug: Log number of images found
+  console.log('Number of images found:', images.length);
+  
+  // Build image map by row
+  // For each image, find which row it's closest to
   const imageMap = {};
-  images.forEach(img => {
-    const row = img.getAnchorCell().getRow();
-    imageMap[row] = img.getUrl();
+  images.forEach((img, idx) => {
+    const anchorRow = img.getAnchorCell().getRow();
+    const url = img.getUrl();
+    console.log('Image ' + idx + ' at row ' + anchorRow + ': ' + url);
+    imageMap[anchorRow] = url;
   });
   
   const result = { prayers: [], slides: [] };
@@ -34,6 +40,7 @@ function doGet() {
   for (let i = 0; i < data.length; i++) {
     const row = data[i];
     const firstCol = (row[0] || '').toString().trim();
+    const rowNum = i + 1; // 1-indexed row number
     
     // Check for section markers
     if (firstCol.toLowerCase() === '#prayers') {
@@ -74,15 +81,16 @@ function doGet() {
         time: timeStr
       });
     } else if (currentSection === 'slides' && row.length >= 4) {
-      // Check for image in this row (1-indexed for imageMap)
-      // Also check if the cell value contains an image URL or "CellImage"
-      let imageUrl = imageMap[i + 1] || '';
+      // Check for image at this row
+      let imageUrl = imageMap[rowNum] || '';
       
-      // If no image over cell, check the cell value
+      // Also check if the cell value is a URL
       const cellValue = (row[3] || '').toString().trim();
-      if (!imageUrl && cellValue && cellValue !== 'CellImage' && cellValue.startsWith('http')) {
+      if (!imageUrl && cellValue && cellValue.startsWith('http')) {
         imageUrl = cellValue;
       }
+      
+      console.log('Slide row ' + rowNum + ', imageUrl: ' + imageUrl);
       
       result.slides.push({
         id: firstCol,
@@ -94,22 +102,23 @@ function doGet() {
     }
   }
   
+  console.log('Final result:', JSON.stringify(result, null, 2));
+  
   return ContentService.createTextOutput(JSON.stringify(result))
     .setMimeType(ContentService.MimeType.JSON);
 }
 ```
 
-5. Click **Save** (floppy disk icon) - name it "AlIhsaanAPI"
-6. Click **Deploy** → **New deployment**
-7. Click the gear icon → Select **Web app**
-8. Set **Execute as**: Me
-9. Set **Who has access**: Anyone
-10. Click **Deploy**
-11. Click **Authorize access** → Choose your Google account → Allow permissions
-12. **Copy the Web app URL** (looks like: `https://script.google.com/macros/s/XXXXX/exec`)
+5. Click **Save** (floppy disk icon)
+6. Click **Run** button to test - check the Execution log to see if images are found
+7. Click **Deploy** → **New deployment**
+8. Click the gear icon → Select **Web app**
+9. Set **Execute as**: Me
+10. Set **Who has access**: Anyone
+11. Click **Deploy**
+12. Click **Authorize access** → Choose your Google account → Allow permissions
+13. **Copy the Web app URL** (looks like: `https://script.google.com/macros/s/XXXXX/exec`)
 
-AKfycbxUABIn9zWxHmsVitnworjiyqwKoavDs_ePglq5_szdC9snWS20ugNmFoUAoj8Ejuk0wg
-https://script.google.com/macros/s/AKfycbxUABIn9zWxHmsVitnworjiyqwKoavDs_ePglq5_szdC9snWS20ugNmFoUAoj8Ejuk0wg/exec
 ### Step 2: Update the Website Configuration
 
 Update the GitHub Secret:
@@ -119,18 +128,19 @@ Update the GitHub Secret:
 
 ---
 
-## How to Add Images (Two Options)
+## How to Add Images
 
-### Option 1: Image Over Cell (Recommended)
-1. Click on the row where you want the image
+### Option 1: Image Over Cells (For Google Sheets)
+1. Click on the cell in column D (Image column) for the slide row
 2. Go to **Insert** → **Image** → **Insert image over cells**
-3. Position the image in column D (Image column)
-4. The script will automatically detect it!
+3. The image will be placed over the cell
+4. **Important**: The image's top-left corner should be in the same row as your slide data
 
-### Option 2: Direct URL
-1. Upload image to Imgur, PostImage, or any image host
-2. Paste the direct URL in the Image column
-3. The script will use that URL
+### Option 2: Direct URL (Easiest - Recommended)
+1. Upload your image to any image hosting service (Imgur, PostImage, etc.)
+2. Copy the direct image URL (must end in .jpg, .png, etc.)
+3. Paste the URL directly in the Image column (column D)
+4. This is the most reliable method!
 
 ---
 
@@ -139,7 +149,7 @@ Update the GitHub Secret:
 ```
 Row 1:  #PRAYERS
 Row 2:  ID, Name, Arabic Name, Time
-Row 3:  fajr, Fajr, فجر, 4:45
+Row 3:  fajr, Fajr, فجر, 5:10
 Row 4:  sunrise, Sunrise, شروق, 5:58
 Row 5:  dhuhr, Dhuhr/ Jummah, ظهر, 12:17
 Row 6:  asr, Asr, عصر, 15:45
@@ -148,35 +158,9 @@ Row 8:  isha, Isha, عشاء, 19:35
 Row 9:  (empty row)
 Row 10: #SLIDES
 Row 11: ID, Title, Subtitle, Image, Gradient
-Row 12: 1, Ramadan Mubarak, Join us for Taraweeh, [IMAGE], from-emerald-600...
-Row 13: 2, Jumu'ah Prayer, Friday 1:00 PM, [IMAGE], from-amber-500...
+Row 12: 1, Ramadan Mubarak, Join us for Taraweeh, https://imgur.com/xxx.png, from-emerald-600...
+Row 13: 2, Jumu'ah Prayer, Friday 1:00 PM, https://imgur.com/yyy.png, from-amber-500...
 ```
-
----
-
-## How to Use (After Setup)
-
-### To Change Prayer Times:
-1. Open the Google Sheet
-2. Find the prayer row (rows 3-8)
-3. Change the time in column D (24-hour format: `HH:MM`)
-4. Done! Changes appear in ~1 minute
-
-### To Add an Announcement with Image:
-1. Add a new row under `#SLIDES` section
-2. Fill in: ID, Title, Subtitle
-3. **Insert → Image → Insert image over cells** → Position in column D
-4. Done! The image appears automatically!
-
-### To Change an Image:
-1. Delete the old image (click on it and press Delete)
-2. Insert a new image over cells
-3. Position it in column D
-4. Done!
-
-### To Remove an Announcement:
-1. Delete the entire row
-2. Done!
 
 ---
 
@@ -201,13 +185,22 @@ Row 13: 2, Jumu'ah Prayer, Friday 1:00 PM, [IMAGE], from-amber-500...
 
 ## Troubleshooting
 
-- **Images not showing**: Make sure you used "Insert image over cells" (not "in cell")
-- **Time showing wrong**: Make sure the time column is formatted as time in Google Sheets
-- **Website not updating**: Wait 1-2 minutes, then refresh the page
-- **Script error**: Re-authorize the script in Apps Script editor
+### Images not showing
+1. **Check the Apps Script log**: Run the script in the editor and check the Execution log
+2. **Use direct URL**: Paste the image URL directly in the Image column (most reliable)
+3. **Image over cells**: Make sure the image's anchor cell is in the correct row
+
+### Time showing wrong
+- Make sure the time column is formatted as time in Google Sheets
+
+### Website not updating
+- Wait 1-2 minutes after changing the sheet
+- Refresh the page
 
 ---
 
 ## Need Help?
 
-Contact your developer with the Web app URL from Step 1.
+Contact your developer with:
+1. The Apps Script URL
+2. The Execution log output (if images aren't working)
