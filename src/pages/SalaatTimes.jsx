@@ -466,6 +466,9 @@ const SalaatTimes = () => {
                            prayer.id === 'maghrib' ? Sunset : Sun;
                 const isNext = nextPrayer && prayer.id === nextPrayer.id;
                 const isPast = nextPrayer && prayers.indexOf(prayer) < nextPrayer.index;
+                
+                // Check if time is a text message (not a time format)
+                const isTextTime = prayer.time && !prayer.time.match(/^\d{1,2}:\d{2}$/);
 
                 return (
                   <div
@@ -491,7 +494,11 @@ const SalaatTimes = () => {
                         <span className={`text-[10px] sm:text-xs block ${isNext ? 'opacity-80' : 'opacity-60'}`}>{prayer.arabicName}</span>
                       </div>
                     </div>
-                    <span className="text-base sm:text-lg lg:text-xl xl:text-2xl font-bold">{prayer.time}</span>
+                    {isTextTime ? (
+                      <span className="text-xs sm:text-sm lg:text-base xl:text-lg font-medium text-right max-w-[50%]">{prayer.time}</span>
+                    ) : (
+                      <span className="text-base sm:text-lg lg:text-xl xl:text-2xl font-bold">{prayer.time}</span>
+                    )}
                   </div>
                 );
               })}
