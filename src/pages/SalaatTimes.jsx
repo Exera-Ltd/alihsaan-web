@@ -141,43 +141,48 @@ const SalaatTimes = () => {
   // Combined slides: Mayyat first, then Google Sheet slides
   const slides = [...funeralSlides, ...googleSlides];
 
+  // Fetch funeral (mayyat) data from API - runs initially and then polls every 60 seconds
+  const fetchFuneralData = async () => {
+    try {
+      const funeralResponse = await fetch('https://alihsaan.com/api/v1/funerals/approved');
+      if (funeralResponse.ok) {
+        const funeralData = await funeralResponse.json();
+        if (funeralData.result && funeralData.records) {
+          // Get today's funerals first, then all approved
+          const today = new Date().toISOString().split('T')[0];
+          const todayFunerals = funeralData.records.filter(record => 
+            record.dateOfFuneral && record.dateOfFuneral.startsWith(today)
+          );
+          const funeralsToShow = todayFunerals.length > 0 ? todayFunerals : funeralData.records;
+          
+          // Convert funeral records to slides
+          const funeralSlideData = funeralsToShow
+            .filter(f => f.file_name)
+            .map((funeral, index) => ({
+              id: `funeral-${funeral.id || index}`,
+              title: funeral.fullNameOfDeceased || 'Janaza',
+              subtitle: funeral.dateOfFuneral 
+                ? `${new Date(funeral.dateOfFuneral).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}`
+                : 'Funeral Service',
+              imageUrl: funeral.file_name,
+              gradient: 'from-slate-700 via-slate-600 to-slate-800',
+              isFuneral: true,
+              details: funeral
+            }));
+          setFuneralSlides(funeralSlideData);
+        }
+      }
+    } catch (err) {
+      console.error('Failed to fetch funerals:', err);
+    }
+  };
+
   // Load prayer times and slides
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch funeral (mayyat) data from API
-        try {
-          const funeralResponse = await fetch('https://alihsaan.com/api/v1/funerals/approved');
-          if (funeralResponse.ok) {
-            const funeralData = await funeralResponse.json();
-            if (funeralData.result && funeralData.records) {
-              // Get today's funerals first, then all approved
-              const today = new Date().toISOString().split('T')[0];
-              const todayFunerals = funeralData.records.filter(record => 
-                record.dateOfFuneral && record.dateOfFuneral.startsWith(today)
-              );
-              const funeralsToShow = todayFunerals.length > 0 ? todayFunerals : funeralData.records;
-              
-              // Convert funeral records to slides
-              const funeralSlideData = funeralsToShow
-                .filter(f => f.file_name)
-                .map((funeral, index) => ({
-                  id: `funeral-${funeral.id || index}`,
-                  title: funeral.fullNameOfDeceased || 'Janaza',
-                  subtitle: funeral.dateOfFuneral 
-                    ? `${new Date(funeral.dateOfFuneral).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}`
-                    : 'Funeral Service',
-                  imageUrl: funeral.file_name,
-                  gradient: 'from-slate-700 via-slate-600 to-slate-800',
-                  isFuneral: true,
-                  details: funeral
-                }));
-              setFuneralSlides(funeralSlideData);
-            }
-          }
-        } catch (err) {
-          console.error('Failed to fetch funerals:', err);
-        }
+        // Fetch funeral data immediately on mount
+        await fetchFuneralData();
 
         // Try Google Sheets/Apps Script for prayer times and additional slides
         if (GOOGLE_SHEET_URL) {
@@ -238,6 +243,15 @@ const SalaatTimes = () => {
       }
     };
     fetchData();
+  }, []);
+
+  // Poll for funeral data updates every 60 seconds to keep posters up to date
+  useEffect(() => {
+    const pollInterval = setInterval(() => {
+      fetchFuneralData();
+    }, 60000); // 60 seconds
+    
+    return () => clearInterval(pollInterval);
   }, []);
 
   // Update current time every second
