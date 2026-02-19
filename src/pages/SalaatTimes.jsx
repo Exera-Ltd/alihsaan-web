@@ -376,25 +376,25 @@ const SalaatTimes = () => {
         {isDarkMode ? <SunDim className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
       </button>
 
-      {/* Main Content - Responsive Layout */}
-      <div className="relative h-full flex flex-col lg:flex-row">
+      {/* Main Content - Responsive Layout - Optimized for 960x540 */}
+      <div className="relative h-full flex flex-col md:flex-row">
         
         {/* LEFT SECTION - Time & Prayer Info */}
-        <div className="w-full lg:w-[55%] h-full flex flex-col justify-center px-4 py-4 sm:px-6 sm:py-6 lg:px-8 xl:px-12">
+        <div className="w-full md:w-[55%] h-full flex flex-col justify-center px-3 py-3 md:px-5 md:py-4">
           
-          {/* Header with Logo */}
-          <div className={`backdrop-blur-xl rounded-2xl p-4 sm:p-5 lg:p-6 border mb-3 sm:mb-4 lg:mb-5 ${theme.card}`}>
-            <div className="flex items-center gap-4">
+          {/* Header with Logo - Compact */}
+          <div className={`backdrop-blur-xl rounded-xl p-3 md:p-4 border mb-2 md:mb-3 ${theme.card}`}>
+            <div className="flex items-center gap-3">
               <img
                 src={`${BASE_URL}assets/al-ihsaan-logo.webp`}
                 alt="Al-Ihsaan Foundation"
-                className="h-16 sm:h-20 lg:h-24 xl:h-28 w-auto drop-shadow-lg"
+                className="h-12 md:h-16 w-auto drop-shadow-lg"
               />
               <div className="flex-1 text-center">
-                <h1 className={`text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-bold mb-1 ${theme.text}`}>MASJID AL-IHSAAN</h1>
-                <p className={`text-sm sm:text-base lg:text-lg font-medium mb-1 ${isDarkMode ? 'text-emerald-400' : 'text-emerald-600'}`}>Islamic Help Reaching People in Need</p>
-                <div className={`flex items-center justify-center gap-2 text-xs sm:text-sm ${theme.textMuted}`}>
-                  <MapPin className="w-3 h-3 sm:w-4 sm:h-4" />
+                <h1 className={`text-lg md:text-xl font-bold mb-0.5 ${theme.text}`}>MASJID AL-IHSAAN</h1>
+                <p className={`text-xs md:text-sm font-medium ${isDarkMode ? 'text-emerald-400' : 'text-emerald-600'}`}>Islamic Help Reaching People in Need</p>
+                <div className={`flex items-center justify-center gap-1.5 text-[10px] md:text-xs ${theme.textMuted}`}>
+                  <MapPin className="w-2.5 h-2.5 md:w-3 md:h-3" />
                   <span>{mosque.location}</span>
                 </div>
               </div>
@@ -402,50 +402,50 @@ const SalaatTimes = () => {
           </div>
 
           {/* Current Time & Next Prayer - Same Row */}
-          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 lg:gap-4 mb-3 sm:mb-4 lg:mb-5">
+          <div className="flex gap-2 md:gap-3 mb-2 md:mb-3">
             {/* Current Time */}
-            <div className={`flex-1 backdrop-blur-xl rounded-xl sm:rounded-2xl p-3 sm:p-4 lg:p-5 border ${theme.card}`}>
-              <div className={`flex items-center gap-2 mb-1 ${theme.accent}`}>
-                <Clock className="w-3 h-3 sm:w-4 sm:h-4" />
-                <span className="text-[10px] sm:text-xs font-medium uppercase tracking-wider">Current Time</span>
+            <div className={`flex-1 backdrop-blur-xl rounded-xl p-2.5 md:p-3 border ${theme.card}`}>
+              <div className={`flex items-center gap-1.5 mb-0.5 ${theme.accent}`}>
+                <Clock className="w-3 h-3" />
+                <span className="text-[9px] md:text-[10px] font-medium uppercase tracking-wider">Current Time</span>
               </div>
-              <div className={`text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-bold tracking-tight ${theme.text}`}>
+              <div className={`text-lg md:text-xl font-bold tracking-tight ${theme.text}`}>
                 {formatTime(currentTime)}
               </div>
-              <div className={`text-xs sm:text-sm mt-1 hidden sm:block ${theme.textMuted}`}>
+              <div className={`text-[10px] md:text-xs mt-0.5 ${theme.textMuted}`}>
                 {formatDate(currentTime)}
               </div>
             </div>
 
             {/* Next Prayer Countdown */}
             {nextPrayer && (
-              <div className={`flex-1 backdrop-blur-xl rounded-xl sm:rounded-2xl p-3 sm:p-4 lg:p-5 border ${
+              <div className={`flex-1 backdrop-blur-xl rounded-xl p-2.5 md:p-3 border ${
                 isDarkMode 
                   ? 'bg-gradient-to-br from-emerald-600/30 to-teal-600/30 border-emerald-500/40' 
                   : 'bg-gradient-to-br from-emerald-100 to-teal-100 border-emerald-200'
               }`}>
-                <div className="flex items-center justify-between mb-1 sm:mb-2">
-                  <div className={`flex items-center gap-2 ${isDarkMode ? 'text-amber-400' : 'text-amber-600'}`}>
-                    <Bell className="w-3 h-3 sm:w-4 sm:h-4" />
-                    <span className="text-[10px] sm:text-xs font-medium uppercase tracking-wider">Next</span>
+                <div className="flex items-center justify-between mb-1">
+                  <div className={`flex items-center gap-1.5 ${isDarkMode ? 'text-amber-400' : 'text-amber-600'}`}>
+                    <Bell className="w-3 h-3" />
+                    <span className="text-[9px] md:text-[10px] font-medium uppercase tracking-wider">Next</span>
                   </div>
-                  <span className={`font-bold text-sm sm:text-base lg:text-lg xl:text-xl ${theme.text}`}>{nextPrayer.name}</span>
+                  <span className={`font-bold text-sm md:text-base ${theme.text}`}>{nextPrayer.name}</span>
                 </div>
-                <div className="flex items-center justify-center gap-1 sm:gap-2">
+                <div className="flex items-center justify-center gap-1">
                   {[
                     { value: timeLeft.hours, label: 'H' },
                     { value: timeLeft.minutes, label: 'M' },
                     { value: timeLeft.seconds, label: 'S' }
                   ].map((item, index) => (
-                    <div key={index} className="flex items-center gap-1">
-                      <div className={`rounded-lg px-2 py-1 sm:px-3 sm:py-1.5 min-w-[40px] sm:min-w-[45px] text-center ${
+                    <div key={index} className="flex items-center gap-0.5">
+                      <div className={`rounded-md px-1.5 py-0.5 md:px-2 md:py-1 min-w-[32px] md:min-w-[38px] text-center ${
                         isDarkMode ? 'bg-white/15' : 'bg-white/80'
                       }`}>
-                        <span className={`text-base sm:text-lg lg:text-xl xl:text-2xl font-bold ${theme.text}`}>
+                        <span className={`text-sm md:text-base font-bold ${theme.text}`}>
                           {String(item.value).padStart(2, '0')}
                         </span>
                       </div>
-                      {index < 2 && <span className={`text-sm sm:text-base lg:text-lg font-bold ${theme.accent}`}>:</span>}
+                      {index < 2 && <span className={`text-xs md:text-sm font-bold ${theme.accent}`}>:</span>}
                     </div>
                   ))}
                 </div>
@@ -454,12 +454,12 @@ const SalaatTimes = () => {
           </div>
 
           {/* Prayer Times Grid - 2 columns x 3 rows - MAIN FOCUS */}
-          <div className={`backdrop-blur-xl rounded-xl sm:rounded-2xl p-3 sm:p-4 lg:p-5 xl:p-6 border flex-1 sm:flex-none ${theme.card}`}>
-            <div className={`flex items-center gap-2 mb-2 sm:mb-3 lg:mb-4 px-1 ${theme.accent}`}>
-              <Star className="w-3 h-3 sm:w-4 sm:h-4" />
-              <span className="text-[10px] sm:text-xs font-medium uppercase tracking-wider">Today's Prayer Times</span>
+          <div className={`backdrop-blur-xl rounded-xl p-2.5 md:p-3 border flex-1 md:flex-none ${theme.card}`}>
+            <div className={`flex items-center gap-1.5 mb-2 px-1 ${theme.accent}`}>
+              <Star className="w-3 h-3" />
+              <span className="text-[9px] md:text-[10px] font-medium uppercase tracking-wider">Today's Prayer Times</span>
             </div>
-            <div className="grid grid-cols-2 gap-2 sm:gap-3 lg:gap-4">
+            <div className="grid grid-cols-2 gap-1.5 md:gap-2">
               {prayers.filter(p => p && p.id && p.name && p.time).map((prayer) => {
                 const Icon = prayer.id === 'fajr' || prayer.id === 'isha' ? Moon :
                            prayer.id === 'sunrise' ? Sunrise :
@@ -473,7 +473,7 @@ const SalaatTimes = () => {
                 return (
                   <div
                     key={prayer.id}
-                    className={`flex items-center justify-between p-2 sm:p-3 lg:p-4 xl:p-5 rounded-lg sm:rounded-xl transition-all ${
+                    className={`flex items-center justify-between p-2 md:p-2.5 rounded-lg transition-all ${
                       isNext
                         ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg shadow-emerald-500/30'
                         : isPast
@@ -483,21 +483,21 @@ const SalaatTimes = () => {
                         : 'bg-emerald-50 text-slate-800 border border-emerald-100'
                     }`}
                   >
-                    <div className="flex items-center gap-2 sm:gap-3 lg:gap-4">
-                      <div className={`w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 xl:w-14 xl:h-14 rounded-lg sm:rounded-xl flex items-center justify-center ${
+                    <div className="flex items-center gap-2">
+                      <div className={`w-7 h-7 md:w-8 md:h-8 rounded-lg flex items-center justify-center ${
                         isNext ? 'bg-white/20' : isDarkMode ? 'bg-white/10' : 'bg-emerald-100'
                       }`}>
-                        <Icon className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 xl:w-7 xl:h-7" />
+                        <Icon className="w-3.5 h-3.5 md:w-4 md:h-4" />
                       </div>
                       <div>
-                        <span className="font-bold text-sm sm:text-base lg:text-lg xl:text-xl">{prayer.name}</span>
-                        <span className={`text-[10px] sm:text-xs block ${isNext ? 'opacity-80' : 'opacity-60'}`}>{prayer.arabicName}</span>
+                        <span className="font-bold text-xs md:text-sm">{prayer.name}</span>
+                        <span className={`text-[8px] md:text-[10px] block ${isNext ? 'opacity-80' : 'opacity-60'}`}>{prayer.arabicName}</span>
                       </div>
                     </div>
                     {isTextTime ? (
-                      <span className="text-xs sm:text-sm lg:text-base xl:text-lg font-medium text-right max-w-[50%]">{prayer.time}</span>
+                      <span className="text-[10px] md:text-xs font-medium text-right max-w-[50%]">{prayer.time}</span>
                     ) : (
-                      <span className="text-base sm:text-lg lg:text-xl xl:text-2xl font-bold">{prayer.time}</span>
+                      <span className="text-sm md:text-base font-bold">{prayer.time}</span>
                     )}
                   </div>
                 );
@@ -507,14 +507,14 @@ const SalaatTimes = () => {
         </div>
 
         {/* RIGHT SECTION - Poster Slider */}
-        <div className="hidden lg:flex lg:w-[45%] h-full flex-col items-center justify-center p-4 lg:p-6 xl:p-8">
+        <div className="hidden md:flex md:w-[45%] h-full flex-col items-center justify-center p-3 md:p-4">
           <div className="relative w-full flex-1">
             
             {/* Slides */}
             {slides.map((slide, index) => (
               <div
                 key={slide.id}
-                className={`absolute inset-0 rounded-xl sm:rounded-2xl overflow-hidden transition-all duration-700 ${
+                className={`absolute inset-0 rounded-xl overflow-hidden transition-all duration-700 ${
                   index === currentSlide
                     ? 'opacity-100 scale-100'
                     : 'opacity-0 scale-95 pointer-events-none'
@@ -530,8 +530,8 @@ const SalaatTimes = () => {
                       className="absolute inset-0 w-full h-full object-contain bg-slate-900"
                     />
                     {/* Funeral badge */}
-                    <div className="absolute top-4 left-4 px-3 py-1.5 bg-emerald-500/90 backdrop-blur-sm rounded-full text-white text-xs font-medium flex items-center gap-1.5">
-                      <Bell className="w-3 h-3" />
+                    <div className="absolute top-2 left-2 px-2 py-1 bg-emerald-500/90 backdrop-blur-sm rounded-full text-white text-[10px] font-medium flex items-center gap-1">
+                      <Bell className="w-2.5 h-2.5" />
                       Janaza Announcement
                     </div>
                   </>
@@ -558,29 +558,29 @@ const SalaatTimes = () => {
                     </div>
 
                     {/* Decorative Elements - very subtle */}
-                    <div className="absolute top-10 right-10 w-40 h-40 bg-white/5 rounded-full blur-3xl" />
-                    <div className="absolute bottom-10 left-10 w-48 h-48 bg-white/5 rounded-full blur-3xl" />
+                    <div className="absolute top-8 right-8 w-32 h-32 bg-white/5 rounded-full blur-3xl" />
+                    <div className="absolute bottom-8 left-8 w-36 h-36 bg-white/5 rounded-full blur-3xl" />
                     
                     {/* Content */}
-                    <div className="relative h-full flex flex-col items-center justify-center p-6 lg:p-8 xl:p-12 text-center">
+                    <div className="relative h-full flex flex-col items-center justify-center p-4 md:p-5 text-center">
                       {/* Title */}
-                      <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl font-bold text-white mb-2 lg:mb-4 leading-tight drop-shadow-lg">
+                      <h2 className="text-xl md:text-2xl font-bold text-white mb-1.5 md:mb-2 leading-tight drop-shadow-lg">
                         {slide.title}
                       </h2>
                       
                       {/* Subtitle */}
-                      <p className="text-sm sm:text-base lg:text-lg xl:text-xl 2xl:text-2xl text-white/70 mb-4 lg:mb-8 max-w-md drop-shadow-md">
+                      <p className="text-xs md:text-sm text-white/70 mb-3 md:mb-4 max-w-xs drop-shadow-md">
                         {slide.subtitle}
                       </p>
 
                       {/* Decorative Bottom */}
                       <div className="mt-auto">
-                        <div className="flex items-center justify-center gap-2 mb-3 lg:mb-4">
-                          <div className="h-px w-16 sm:w-20 bg-white/20" />
-                          <div className="w-2 h-2 bg-white/30 rounded-full" />
-                          <div className="h-px w-16 sm:w-20 bg-white/20" />
+                        <div className="flex items-center justify-center gap-1.5 mb-2">
+                          <div className="h-px w-12 bg-white/20" />
+                          <div className="w-1.5 h-1.5 bg-white/30 rounded-full" />
+                          <div className="h-px w-12 bg-white/20" />
                         </div>
-                        <p className="text-white/50 text-xs sm:text-sm lg:text-base">MASJID AL-IHSAAN</p>
+                        <p className="text-white/50 text-[10px] md:text-xs">MASJID AL-IHSAAN</p>
                       </div>
                     </div>
                   </>
@@ -593,15 +593,15 @@ const SalaatTimes = () => {
               <>
                 <button
                   onClick={prevSlide}
-                  className="absolute left-2 lg:left-3 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-all z-10"
+                  className="absolute left-1.5 top-1/2 -translate-y-1/2 w-7 h-7 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-all z-10"
                 >
-                  <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6" />
+                  <ChevronLeft className="w-3.5 h-3.5" />
                 </button>
                 <button
                   onClick={nextSlide}
-                  className="absolute right-2 lg:right-3 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-all z-10"
+                  className="absolute right-1.5 top-1/2 -translate-y-1/2 w-7 h-7 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-all z-10"
                 >
-                  <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6" />
+                  <ChevronRight className="w-3.5 h-3.5" />
                 </button>
               </>
             )}
@@ -610,23 +610,23 @@ const SalaatTimes = () => {
             {slides.length > 1 && (
               <button
                 onClick={() => setIsPlaying(!isPlaying)}
-                className="absolute top-3 lg:top-4 right-3 lg:right-4 w-8 h-8 sm:w-10 sm:h-10 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-all z-10"
+                className="absolute top-2 right-2 w-7 h-7 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-all z-10"
               >
-                {isPlaying ? <Pause className="w-3 h-3 sm:w-4 sm:h-4" /> : <Play className="w-3 h-3 sm:w-4 sm:h-4" />}
+                {isPlaying ? <Pause className="w-3 h-3" /> : <Play className="w-3 h-3" />}
               </button>
             )}
 
             {/* Slide Indicators - Only show if more than 1 slide */}
             {slides.length > 1 && (
-              <div className="absolute bottom-3 lg:bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 z-10">
+              <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-10">
                 {slides.map((_, index) => (
                   <button
                     key={index}
                     onClick={() => setCurrentSlide(index)}
-                    className={`h-1.5 sm:h-2 rounded-full transition-all ${
+                    className={`h-1 rounded-full transition-all ${
                       index === currentSlide
-                        ? 'w-6 sm:w-8 bg-white'
-                        : 'w-1.5 sm:w-2 bg-white/40 hover:bg-white/60'
+                        ? 'w-5 bg-white'
+                        : 'w-1 bg-white/40 hover:bg-white/60'
                     }`}
                   />
                 ))}
@@ -635,23 +635,23 @@ const SalaatTimes = () => {
           </div>
 
           {/* Powered By Card */}
-          <div className={`mt-4 w-full backdrop-blur-md rounded-xl p-4 border ${
+          <div className={`mt-2 w-full backdrop-blur-md rounded-lg p-2.5 border ${
             isDarkMode 
               ? 'bg-white/90 border-white/20' 
               : 'bg-white border-slate-200'
           }`}>
-            <div className="flex items-center justify-center gap-3">
-              <span className="text-slate-500 text-sm">Powered by</span>
+            <div className="flex items-center justify-center gap-2">
+              <span className="text-slate-500 text-[10px]">Powered by</span>
               <img
                 src={`${BASE_URL}assets/exera-logo.png`}
                 alt="Exera"
-                className="h-6 w-auto"
+                className="h-4 w-auto"
               />
-              <span className="text-slate-300 text-xl">|</span>
+              <span className="text-slate-300 text-sm">|</span>
               <img
                 src={`${BASE_URL}assets/made-in-moris.png`}
                 alt="Made in Moris"
-                className="h-6 w-auto"
+                className="h-4 w-auto"
               />
             </div>
           </div>
