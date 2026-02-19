@@ -405,7 +405,7 @@ const SalaatTimes = () => {
                 className="h-12 md:h-16 w-auto drop-shadow-lg"
               />
               <div className="flex-1 text-center">
-                <h1 className={`text-lg md:text-xl font-bold mb-0.5 ${theme.text}`}>MASJID AL-IHSAAN</h1>
+                <h1 className={`text-lg md:text-xl font-bold mb-0.5 ${theme.text}`}>MASJID AL IHSAAN</h1>
                 <p className={`text-xs md:text-sm font-medium ${isDarkMode ? 'text-emerald-400' : 'text-emerald-600'}`}>Islamic Help Reaching People in Need</p>
                 <div className={`flex items-center justify-center gap-1.5 text-[10px] md:text-xs ${theme.textMuted}`}>
                   <MapPin className="w-2.5 h-2.5 md:w-3 md:h-3" />
@@ -594,7 +594,7 @@ const SalaatTimes = () => {
                           <div className="w-1.5 h-1.5 bg-white/30 rounded-full" />
                           <div className="h-px w-12 bg-white/20" />
                         </div>
-                        <p className="text-white/50 text-[10px] md:text-xs">MASJID AL-IHSAAN</p>
+                        <p className="text-white/50 text-[10px] md:text-xs">MASJID AL IHSAAN</p>
                       </div>
                     </div>
                   </>
