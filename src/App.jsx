@@ -423,7 +423,7 @@ const CampaignCarousel = ({ onDonateClick }) => {
 
   if (loading) {
     return (
-      <div className="w-full aspect-[3/4] max-h-[560px] rounded-2xl bg-slate-100 animate-pulse flex items-center justify-center">
+      <div className="w-full h-[400px] rounded-2xl bg-slate-100 animate-pulse flex items-center justify-center">
         <div className="w-8 h-8 border-2 border-emerald-300 border-t-emerald-600 rounded-full animate-spin" />
       </div>
     );
@@ -438,7 +438,7 @@ const CampaignCarousel = ({ onDonateClick }) => {
     <div className="relative w-full">
       {/* Main Image — tap to enlarge */}
       <div
-        className="relative aspect-[3/4] max-h-[560px] overflow-hidden rounded-2xl cursor-pointer group shadow-2xl shadow-emerald-200/50"
+        className="relative overflow-hidden rounded-2xl cursor-pointer group shadow-2xl shadow-emerald-200/50"
         onClick={() => { setLightboxSrc(item.image_en); setLightboxOpen(true); }}
       >
         <img
@@ -833,7 +833,7 @@ const HeroSection = () => {
             </div>
 
             {/* Right: Campaign Carousel (bigger) */}
-            <div className="w-full lg:w-[440px] xl:w-[520px] flex-shrink-0 pb-8">
+            <div className="w-full lg:w-[520px] xl:w-[620px] flex-shrink-0 pb-8 mx-auto lg:mx-0">
               <CampaignCarousel onDonateClick={openModal} />
             </div>
           </div>
@@ -1296,7 +1296,7 @@ const StoriesSection = () => {
   ];
 
   return (
-    <section id="stories" className="section-padding bg-gradient-to-b from-white to-emerald-50 relative overflow-hidden">
+    <section id="stories" className="py-14 sm:py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-white to-emerald-50 relative overflow-hidden">
       <div className="absolute inset-0 islamic-pattern opacity-30" />
 
       <div className="container-custom relative z-10">
