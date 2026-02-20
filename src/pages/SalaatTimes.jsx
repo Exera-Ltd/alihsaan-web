@@ -138,8 +138,9 @@ const SalaatTimes = () => {
   const [timeLeft, setTimeLeft] = useState({ hours: 0, minutes: 0, seconds: 0 });
   const [isDarkMode, setIsDarkMode] = useState(true);
 
-  // Combined slides: Mayyat first, then Google Sheet slides
-  const slides = [...funeralSlides, ...googleSlides];
+  // Combined slides: Only Google Sheet slides (mayyat API commented out for now)
+  // const slides = [...funeralSlides, ...googleSlides];
+  const slides = googleSlides;
 
   // Fetch funeral (mayyat) data from API - runs initially and then polls every 60 seconds
   const fetchFuneralData = async () => {
@@ -178,12 +179,10 @@ const SalaatTimes = () => {
   };
 
   // Load prayer times and slides
+  // COMMENTED: mayyat API disabled - only showing images from sheet for now
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch funeral data immediately on mount
-        await fetchFuneralData();
-
         // Try Google Sheets/Apps Script for prayer times and additional slides
         if (GOOGLE_SHEET_URL) {
           const response = await fetch(GOOGLE_SHEET_URL);
@@ -245,14 +244,52 @@ const SalaatTimes = () => {
     fetchData();
   }, []);
 
-  // Poll for funeral data updates every 60 seconds to keep posters up to date
+  // Poll for Google Sheet data updates every 60 seconds to keep times up to date without refresh
   useEffect(() => {
-    const pollInterval = setInterval(() => {
-      fetchFuneralData();
-    }, 60000); // 60 seconds
+    const pollGoogleSheet = async () => {
+      try {
+        if (GOOGLE_SHEET_URL) {
+          const response = await fetch(GOOGLE_SHEET_URL);
+          if (response.ok) {
+            const text = await response.text();
+            
+            let data;
+            if (text.trim().startsWith('{') || text.trim().startsWith('[')) {
+              data = JSON.parse(text);
+            } else {
+              data = parseCSV(text);
+            }
+            
+            if (data.prayers && data.prayers.length > 0) {
+              setPrayerData({
+                mosque: { name: "Al-Ihsaan Foundation", location: "Port Louis, Mauritius" },
+                prayers: data.prayers
+              });
+            }
+            if (data.slides && data.slides.length > 0) {
+              setGoogleSlides(data.slides);
+            }
+          }
+        }
+      } catch (err) {
+        console.error('Failed to poll Google Sheet:', err);
+      }
+    };
+    
+    const pollInterval = setInterval(pollGoogleSheet, 60000); // 60 seconds
     
     return () => clearInterval(pollInterval);
   }, []);
+
+  // Poll for funeral data updates every 60 seconds to keep posters up to date
+  // COMMENTED: mayyat API disabled for now
+  // useEffect(() => {
+  //   const pollInterval = setInterval(() => {
+  //     fetchFuneralData();
+  //   }, 60000); // 60 seconds
+  //   
+  //   return () => clearInterval(pollInterval);
+  // }, []);
 
   // Update current time every second
   useEffect(() => {
