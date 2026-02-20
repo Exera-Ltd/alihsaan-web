@@ -444,7 +444,7 @@ const CampaignCarousel = ({ onDonateClick }) => {
         <img
           src={item.image_en}
           alt={item.title_en}
-          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+          className="w-full h-auto block transition-transform duration-700 group-hover:scale-105"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent" />
         {/* Featured badge */}
@@ -833,7 +833,7 @@ const HeroSection = () => {
             </div>
 
             {/* Right: Campaign Carousel (bigger) */}
-            <div className="w-full lg:w-[520px] xl:w-[620px] flex-shrink-0 pb-8 mx-auto lg:mx-0">
+            <div className="w-full max-w-sm sm:max-w-md lg:w-[520px] xl:w-[620px] flex-shrink-0 pb-8 mx-auto lg:mx-0">
               <CampaignCarousel onDonateClick={openModal} />
             </div>
           </div>
@@ -1822,13 +1822,13 @@ const FuneralPostersSection = () => {
               <>
                 <button
                   onClick={scrollLeft}
-                  className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-9 h-9 rounded-full bg-white shadow-lg border border-slate-100 flex items-center justify-center text-slate-600 hover:bg-emerald-50 transition-colors"
+                  className="absolute left-0 top-1/2 -translate-y-1/2 sm:-translate-x-4 z-10 w-9 h-9 rounded-full bg-white shadow-lg border border-slate-100 flex items-center justify-center text-slate-600 hover:bg-emerald-50 transition-colors"
                 >
                   <ChevronLeft className="w-4 h-4" />
                 </button>
                 <button
                   onClick={scrollRight}
-                  className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-9 h-9 rounded-full bg-white shadow-lg border border-slate-100 flex items-center justify-center text-slate-600 hover:bg-emerald-50 transition-colors"
+                  className="absolute right-0 top-1/2 -translate-y-1/2 sm:translate-x-4 z-10 w-9 h-9 rounded-full bg-white shadow-lg border border-slate-100 flex items-center justify-center text-slate-600 hover:bg-emerald-50 transition-colors"
                 >
                   <ChevronRight className="w-4 h-4" />
                 </button>
@@ -1844,7 +1844,7 @@ const FuneralPostersSection = () => {
               {funerals.map((funeral, index) => (
                 <div
                   key={funeral.id || index}
-                  className={`flex-shrink-0 w-52 sm:w-60 transition-all duration-700 ${
+                  className={`flex-shrink-0 w-64 sm:w-72 transition-all duration-700 ${
                     isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
                   }`}
                   style={{ transitionDelay: `${index * 80}ms` }}
