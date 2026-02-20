@@ -1715,6 +1715,13 @@ const Footer = () => {
               <span className="text-slate-500 text-xs sm:text-sm">
                 Registered Charitable Foundation No: {CONFIG.organization.registration}
               </span>
+              <span className="text-slate-700">|</span>
+              <div className="flex items-center gap-2 opacity-40">
+                <span className="text-slate-400 text-sm">Powered by</span>
+                <img src={`${BASE_URL}assets/exera-logo.png`} alt="Exera" className="h-6 w-auto brightness-0 invert" />
+                <span className="text-slate-600 text-sm">|</span>
+                <img src={`${BASE_URL}assets/made-in-moris.png`} alt="Made in Moris" className="h-6 w-auto brightness-0 invert" />
+              </div>
             </div>
           </div>
         </div>
